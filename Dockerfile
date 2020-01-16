@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.7-alpine
 ADD . ./app/
 WORKDIR /app/
 RUN python -m pip install --upgrade pip && \

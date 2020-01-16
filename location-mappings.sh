@@ -1,4 +1,4 @@
-curl -X PUT "192.168.25.163:9200/location_lookup?pretty" -H 'Content-Type: application/json' -d'
+curl -X PUT "192.31.2.66:9200/location_lookup?pretty" -H 'Content-Type: application/json' -d'
 {
     "settings": {
         "analysis": {

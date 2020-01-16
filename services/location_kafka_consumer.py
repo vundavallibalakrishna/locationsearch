@@ -81,58 +81,61 @@ class LocationKafkaListerner(object):
             self.buildLocationLookupEntity(message.preferredLocations)
 
     def buildLocationLookupEntity(self, location):
-        addressComponents = []
-        locationLookup = {}
-        if location['city']:
-            addressComponents.append(location['city'])
-        if location['state']:
-            addressComponents.append(location['state'])
-        elif location['stateCode']:
-            addressComponents.append(location['stateCode'])
-        if location['country']:
-            addressComponents.append(location['country'])
-        elif location['countryCode']:
-            addressComponents.append(location['countryCode'])
-        if(addressComponents.count == 0):
-            if location['continent']:
-                addressComponents.append(location['continent'])
-            elif location['continentCode']:
-                addressComponents.append(location['continentCode'])
+        latlng = location['point'].split(",")
+        if(location['point'] == '' or location['point'] is None or (float(latlng[0]) == 0 and float(latlng[1]) == 0)):
+            print('no location latlng = {}'.format(latlng))
+        else:
+            addressComponents = []
+            locationLookup = {}
+            if location['city']:
+                addressComponents.append(location['city'])
+            if location['state']:
+                addressComponents.append(location['state'])
+            elif location['stateCode']:
+                addressComponents.append(location['stateCode'])
+            if location['country']:
+                addressComponents.append(location['country'])
+            elif location['countryCode']:
+                addressComponents.append(location['countryCode'])
+            if(addressComponents.count == 0):
+                if location['continent']:
+                    addressComponents.append(location['continent'])
+                elif location['continentCode']:
+                    addressComponents.append(location['continentCode'])
 
-        locationLookup['id'] = str(uuid.uuid4())
-        locationLookup['keywords'] = ", ".join(addressComponents)
-        locationLookup['city'] = location['city']
-        locationLookup['state'] = location['state']
-        locationLookup['stateCode'] = location['stateCode']
-        locationLookup['country'] = location['country']
-        locationLookup['countryCode'] = location['countryCode']
-        locationLookup['continent'] = location['continent']
-        locationLookup['continentCode'] = location['continentCode']
-        locationLookup['zipCode'] = location['zipCode']
-        # print(locationLookup)
-        response = self.client.search(
-            index="location_lookup",
-            body={
-                "size": 1,
-                "query": {
-                    "term": {
-                        "keywords.lowercase": locationLookup['keywords'].lower()
+            locationLookup['id'] = str(uuid.uuid4())
+            locationLookup['keywords'] = ", ".join(addressComponents)
+            locationLookup['city'] = location['city']
+            locationLookup['state'] = location['state']
+            locationLookup['stateCode'] = location['stateCode']
+            locationLookup['country'] = location['country']
+            locationLookup['countryCode'] = location['countryCode']
+            locationLookup['continent'] = location['continent']
+            locationLookup['continentCode'] = location['continentCode']
+            locationLookup['zipCode'] = location['zipCode']
+            response = self.client.search(
+                index="location_lookup",
+                body={
+                    "size": 1,
+                    "query": {
+                        "term": {
+                            "keywords.lowercase": locationLookup['keywords'].lower()
+                        }
                     }
                 }
-            }
-        )
-
-        if(response['hits']['total'] == 0):
-            print("Indexing " + locationLookup['keywords'])
-            print(self.client.index(
-                index='location_lookup',
-                doc_type='location_lookup',
-                id=locationLookup['id'],
-                refresh='wait_for',
-                body=locationLookup)
             )
-        else:
-            print("Ignoring" + locationLookup['keywords'])
+
+            if(response['hits']['total'] == 0):
+                print("Indexing " + locationLookup['keywords'])
+                print(self.client.index(
+                    index='location_lookup',
+                    doc_type='location_lookup',
+                    id=locationLookup['id'],
+                    refresh='wait_for',
+                    body=locationLookup)
+                )
+            else:
+                print("Ignoring" + locationLookup['keywords'])
 
     def unpack(self, payload):
         MAGIC_BYTES = 0
