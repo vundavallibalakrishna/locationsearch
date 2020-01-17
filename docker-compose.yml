@@ -1,0 +1,7 @@
+version: '2'
+services:
+  candidatesearch-app:
+    image: locationsearch
+    container_name: preproduction_locationsearch
+    env_file:
+      - ./.env

@@ -40,7 +40,7 @@ class LocationKafkaListerner(object):
     def readJobsData(self):
         print("4")
         kafkaConsumer = self.config.getKafkaConsumer(
-            'locationsearch_job_entity' + str(uuid.uuid1()))
+            'locationsearch_job_entity')
         kafkaConsumer.subscribe(['job_entity'])
         self.get_data(kafkaConsumer)
 
@@ -65,9 +65,9 @@ class LocationKafkaListerner(object):
                 print("after getting a message")
             except SerializerError as e:
                 print("Message deserialization failed for {}: {}".format(msg, e))
-                raise SerializerError
-            except:
-                print('An error occurred.')
+             raise SerializerError
+	    except:
+	        print('An error occurred.')
 
             print(msg)
             if msg:

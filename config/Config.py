@@ -34,4 +34,6 @@ class Config(object):
             'auto.offset.reset': 'earliest',
             'enable.auto.commit': True,
             'auto.commit.interval.ms': 5000,
+            'session.timeout.ms': 5000,
+            'heartbeat.interval.ms': 2500
         })

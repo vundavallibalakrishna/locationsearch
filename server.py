@@ -10,9 +10,12 @@ api = Api(app)
 api.add_resource(LocationAutoComplete, '/api/location/search')
 api.add_resource(LocationSearch, '/api/location/suggest')
 app.config.from_envvar('APP_CONFIG_FILE')
-
+#Config(app)
+#LocationKafkaListerner(app)
+#print("Running")
 
 if __name__ == '__main__':
+    print ("Running the mail app")
     Config(app)
     LocationKafkaListerner(app)
     app.run()
